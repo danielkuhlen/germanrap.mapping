@@ -1,9 +1,31 @@
 --- 
-title: "YOUR TITLE HERE"
-author: "YOUR NAME HERE"
+title: "Who puts their city on the map?"
+subtitle: "Mapping which cities and district have produced the most number 1 records in Germany"
+author: "Daniel Kuhlen"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
 
-# Down the rabbit-hole
+# Introduction
+
+German rap music has made a significant impact on the music industry, transitioning from a subculture to a dominant presence in mainstream pop culture. In recent years, rappers have become more and more often superstars, regularly achieving top positions on the music charts.
+
+This project will delve into the geographic competition between German rappers, by examining their origins. Many German rappers have a strong connection to their hometown or region, which often plays a defining role in shaping their music and identity. This connection is reflected in the lyrics of their songs, where they pay homage to the cultural and social influences of their place of origin. In German rap music, the artist's origin often becomes an integral part of their image and can play a major role in their popularity and success.
+
+Our aim is to analyze which state and district (known as Landkreis in German) in Germany produces the most number one albums and singles. To give a data driven response to the
+question which city and area is the most influential.
+
+## Data
+
+The data for this project was sourced from the Wikipedia lists of German Rap Albums and German Rap Singles that reached number one on the German charts. These lists can be found at [German Rap Albums](https://de.wikipedia.org/wiki/Liste_der_Rapalben,_die_Platz_eins_der_deutschen_Charts_erreichten) and [German Rap Singles](https://de.wikipedia.org/wiki/Liste_der_Rapsongs,_die_Platz_eins_der_deutschen_Charts_erreichten).
+
+## Aim
+
+The aim of this project is to create interactive maps and a clean, well-organized dataset that is available for public use. The maps will visually display the information gathered from the data, allowing for an engaging and easy-to-understand representation of the results. The tidyformat dataset will be structured in a clear and concise manner, making it accessible and straightforward for those who wish to use it for their own research or analysis.
+
+## Contact Information
+
+If you have any question I am happy to help you out.
+
+**Daniel Kuhlen**: daniel.kuhlen@gmx.de
 
