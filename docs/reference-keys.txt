@@ -2,5 +2,8 @@ introduction
 data
 aim
 contact-information
-the-pool-of-tears
+data-1
+data-import
+data-wrangling
+data-export-excel
 a-caucus-race-and-a-long-tale

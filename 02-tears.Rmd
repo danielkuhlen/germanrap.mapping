@@ -1,2 +1,328 @@
-# The pool of tears
+# Data
 
+## Data Import
+
+```{r, results='hide', error=FALSE, warning=FALSE, message=FALSE}
+# packages
+
+library(tidyverse)
+library(rvest)
+library(rnaturalearth)
+library(sf)
+library(tm)
+
+# Deutschrapper:innen ----------------------------------------------------------
+
+## Einem Objekt (url) die URL der Seite zuweisen aus der die Daten gescraped werden sollen
+url = "https://de.wikipedia.org/wiki/Liste_von_Hip-Hop-Musikern_Deutschlands"
+
+## Einem objekt die html zuweisen die aus der url gelesen wird.
+rapperhtml <- read_html(url)
+
+## Im Quellcode der Website nach dem Objekt oder der ID suchen das gescraped werden soll und über html_nodes Objekte anzeigen lassen.
+rapperhtml %>% 
+  html_nodes(css = "table")
+
+## Output von html_nodes auslesen und gewünschte Tabelle in dem Code unter nth() spezifizieren.
+rapper =  
+  rapperhtml %>% 
+  html_nodes(css = "table") %>% 
+  nth(1) %>% 
+  html_table(fill = TRUE)
+
+## Objekt als Datenframe - fertig!
+rapper <- as.data.frame(rapper)
+## unnötige Dateien entfernen
+rm(rapperhtml, url)
+
+
+# Rapalben mit Platz 1 Chartplatzierung ----------------------------------------
+
+## Einem Objekt (url) die URL der Seite zuweisen aus der die Daten gescraped werden sollen
+url = "https://de.wikipedia.org/wiki/Liste_der_Rapalben,_die_Platz_eins_der_deutschen_Charts_erreichten"
+
+## Einem objekt die html zuweisen die aus der url gelesen wird.
+albenhtml = read_html(url)
+
+## Im Quellcode der Website nach dem Objekt oder der ID suchen das gescraped werden soll und über html_nodes Objekte anzeigen lassen.
+albenhtml %>% 
+  html_nodes(css = "table")
+
+## Output von html_nodes auslesen und gewünschte Tabelle in dem Code unter nth() spezifizieren.
+alben =  
+  albenhtml %>% 
+  html_nodes(css = "table") %>% 
+  nth(1) %>% 
+  html_table(fill = TRUE)
+
+## Objekt als Datenframe - fertig!
+alben <- as.data.frame(alben)
+## unnötige Dateien entfernen
+rm(albenhtml, url)
+
+# Rapsingles mit Platz 1 Chartplatzierung ----------------------------------------
+
+## Einem Objekt (url) die URL der Seite zuweisen aus der die Daten gescraped werden sollen
+url = "https://de.wikipedia.org/wiki/Liste_der_Rapsongs,_die_Platz_eins_der_deutschen_Charts_erreichten"
+
+## Einem objekt die html zuweisen die aus der url gelesen wird.
+singleshtml = read_html(url)
+
+## Im Quellcode der Website nach dem Objekt oder der ID suchen das gescraped werden soll und über html_nodes Objekte anzeigen lassen.
+singleshtml %>% 
+  html_nodes(css = "table")
+
+## Output von html_nodes auslesen und gewünschte Tabelle in dem Code unter nth() spezifizieren.
+singles =  
+  singleshtml %>% 
+  html_nodes(css = "table") %>% 
+  nth(1) %>% 
+  html_table(fill = TRUE)
+
+## Objekt als Datenframe - fertig!
+singles <- as.data.frame(singles)
+## unnötige Dateien entfernen
+rm(singleshtml, url)
+
+
+# Shapefiles // GIS-Files ------------------------------------------------------
+de_1 <- ne_states(country = "germany", returnclass = "sf")
+de_2 <- read_sf("shapefiles/gadm41_DEU_2.shp")
+```
+
+## Data Wrangling
+
+```{r, results='hide', error=FALSE, warning=FALSE, message=FALSE}
+####################### Datensätze Rohformat ###################################
+
+# Rapper:innen Datensatz -------------------------------------------------------
+
+## Unnötige Columns entfernen
+rapper[1] <- NULL
+rapper[2] <- NULL
+
+## rename
+rapper <- rapper %>% 
+  rename(city.origin = Herkunft, 
+         birthyear = Lebensdaten,
+         membership.group = `Mitgliedschaft in Bands`,
+         artist.name = "Künstlername")
+
+
+
+# Singles Datensatz ------------------------------------------------------------
+
+## unnötige columns entfernen
+singles$`Wochen in den Charts` <- NULL
+singles$Jahr <- NULL
+
+## rename columns
+singles.prc <- singles %>% 
+  rename(project.name = "Titel",
+         artist.name = "Künstler",
+         weeks.nr1 = "Wochen auf Platz 1",
+         award = "Auszeichnung")
+
+## alle nicht deutschen alben löschen
+singles.prc <- singles.prc[!grepl("Vereinigte Staaten", singles.prc$artist.name),]
+singles.prc <- singles.prc[!grepl("Kanada", singles.prc$artist.name),]
+singles.prc <- singles.prc[!grepl("Schweden", singles.prc$artist.name),]
+singles.prc <- singles.prc[!grepl("Australien", singles.prc$artist.name),]
+singles.prc <- singles.prc[!grepl("Danemark", singles.prc$artist.name),]
+singles.prc <- singles.prc[!grepl("Finnland", singles.prc$artist.name),]
+singles.prc <- singles.prc[!grepl("Kolumbien", singles.prc$artist.name),]
+singles.prc <- singles.prc[!grepl("Niederlande", singles.prc$artist.name),]
+singles.prc <- singles.prc[!grepl("Somalia", singles.prc$artist.name),]
+singles.prc <- singles.prc[!grepl("Vereinigtes Konigreich", singles.prc$artist.name),]
+
+## unnötige wörter entfernen
+list.words <- c("Deutschland", "und", "Kosovo", "feat.")
+
+singles.prc <- singles.prc %>% 
+  mutate(artist.name = removeWords(artist.name, list.words),
+         artist.name = trimws(artist.name, which = c("both", "left", "right"), whitespace = "[ \t\r\n]"))
+
+
+
+# Alben Datensatz --------------------------------------------------------------
+
+## unnötige columns entfernen
+alben$`Wochen in den Charts` <- NULL
+alben$Art <- NULL
+
+## rename columns
+alben.prc <- alben %>% 
+  rename(project.name = Titel,
+         year = Jahr,
+         artist.name = "Künstler",
+         weeks.nr1 = `Wochen auf Platz 1`,
+         award = Auszeichnung)
+
+## alle nicht deutschen alben löschen
+alben.prc <- alben.prc[!grepl("Vereinigte Staaten", alben.prc$artist.name),]
+
+## unnötige wörter entfernen
+list.words <- c("Deutschland", "und")
+
+alben.prc <- alben.prc %>% 
+  mutate(artist.name = removeWords(artist.name, list.words),
+         artist.name = trimws(artist.name, which = c("both", "left", "right"), whitespace = "[ \t\r\n]"))
+```
+
+## Data Export Excel
+
+```{r, results='hide', error=FALSE, warning=FALSE, message=FALSE}
+############################ datensatz excel ###################################
+
+## Datensatz erstellen mit allen Rapper:innen die eine Single oder Album auf der 
+## 1 hatten, damit dieser dann händisch in excel fertig kodiert werden kann
+
+alben.prc <- alben.prc %>% 
+  select(artist.name, project.name, weeks.nr1, award) %>% 
+  mutate(type = "album")
+
+singles.prc <- singles.prc %>% 
+  select(artist.name, project.name, weeks.nr1, award) %>% 
+  mutate(type = "single")
+
+rapper.singles.alben <- rbind(alben.prc, singles.prc)
+
+# leftjoin mit rapper datensatz wikipedia 
+rapper.list.complete <- left_join(rapper.singles.alben, rapper, by=("artist.name"))
+
+rapper.list.complete <- rapper.list.complete %>% 
+  unite("id", artist.name, project.name, type, sep = "-", remove = FALSE)
+  
+## export excel -> dann händisch kodieren
+#write_xlsx(rapper.list.complete, "/Users/danielkuhlen/Desktop/rapper.list.complete.xlsx")
+```
+
+The result of the data wrangling in R is a dataset where each row represents a single or album that charted at number 1. For some rappers, their origins have already been joined to the rapper dataset. However, the problem is that groups and features cannot have their origins joined to the rapper dataset because only solo performers are listed there. Therefore, the origins for these cases are manually coded. This is done by following this schema: groups with members who have different origins are divided based on their members and coded individually. To avoid double counting a project, the number of weeks in the charts is divided by the number of collaborators.
+
+For example, Bausa and Apache207 share the weeks at number 1 of their song "Madonna." The song was in the charts for one week, so both (and their origins) will go into the final dataset with 0.5 weeks.
+
+For groups that all have the same origin, like 187 Straßenbande (Hamburg), the group will be treated as a solo artist and one origin will be assigned to the group. The origin of rappers who are not listed in the rapper dataset will be researched and added manually.
+
+```{r, results='hide', error=FALSE, warning=FALSE, message=FALSE}
+
+########################## finale datensatze ###################################
+
+dataset.complete <- read_excel("/Users/danielkuhlen/Desktop/UNI/Semester/6. SoSe 2022/Introduction GIS-Software/Assignments/rap.map/rapper.list.complete 2.mod.xlsx")
+
+# album ------------------------------------------------------------------------
+
+album.complete <- dataset.complete %>% 
+  subset(type == "album")
+
+## album: wochen auf 1 nach landkreis
+album.kreis.weeks <- album.complete %>%                                       
+  group_by(kreis.origin) %>%                        
+  summarise_at(vars(weeks.nr1.adj),              
+               list(weeks.nr1.adj = sum))
+
+## album: wochen auf 1 nach bundesland
+album.states.weeks <- album.complete %>% 
+  group_by(state.origin) %>%
+  summarise_at(vars(weeks.nr1.adj),
+               list(weeks.nr1.adj = sum))
+
+# single -----------------------------------------------------------------------
+
+single.complete <- dataset.complete %>% 
+  subset(type == "single")
+
+## album: wochen auf 1 nach landkreis
+single.kreis.weeks <- single.complete %>%                                       
+  group_by(kreis.origin) %>%                        
+  summarise_at(vars(weeks.nr1.adj),              
+               list(weeks.nr1.adj = sum))
+
+## album: wochen auf 1 nach bundesland
+single.state.weeks <- single.complete %>% 
+  group_by(state.origin) %>%
+  summarise_at(vars(weeks.nr1.adj),
+               list(weeks.nr1.adj = sum))
+
+#################### Finale Datensätze mit Geodaten ############################
+
+# album kreise -----------------------------------------------------------------
+
+## merge shapefiles mit album.kreis.weeks
+album.kreise.geo <- left_join(de_2, album.kreis.weeks, by=c("NAME_2" = "kreis.origin"))
+
+# auf 2 nachkommastelle runden
+album.kreise.geo <- album.kreise.geo %>%
+  mutate(weeks.nr1.adj = round(weeks.nr1.adj, 2))
+
+# Neue Variable Wochenzahl mit NA = 0
+album.kreise.geo <- album.kreise.geo %>% 
+  mutate(weeks.nona = weeks.nr1.adj)
+
+album.kreise.geo$weeks.nona[is.na(album.kreise.geo$weeks.nona)] <- 0
+
+# GID_2 als Name Landkreis + Wochenanzahl damit auf interaktive Karte angezeigt wird
+album.kreise.geo$GID_2 <- paste(album.kreise.geo$NAME_2, ":", album.kreise.geo$weeks.nona)
+
+
+# album bundeslaender ----------------------------------------------------------
+
+## merge shapefiles mit album.kreis.weeks
+album.states.geo <- left_join(de_1, album.states.weeks, by=c("name" = "state.origin"))
+
+# auf 2 nachkommastelle runden
+album.states.geo <- album.states.geo %>%
+  mutate(weeks.nr1.adj = round(weeks.nr1.adj, 2))
+
+# Neue Variable Wochenzahl mit NA = 0
+album.states.geo <- album.states.geo %>% 
+  mutate(weeks.nona = weeks.nr1.adj)
+
+album.states.geo$weeks.nona[is.na(album.states.geo$weeks.nona)] <- 0
+
+# GID_2 als Name Landkreis + Wochenanzahl damit auf interaktive Karte angezeigt wird
+album.states.geo$featurecla <- paste(album.states.geo$name, ":", album.states.geo$weeks.nona)
+
+
+# singles kreise ---------------------------------------------------------------
+
+## merge shapefiles mit album.kreis.weeks
+singles.kreise.geo <- left_join(de_2, single.kreis.weeks, by=c("NAME_2" = "kreis.origin"))
+
+# auf 2 nachkommastelle runden
+singles.kreise.geo <- singles.kreise.geo %>%
+  mutate(weeks.nr1.adj = round(weeks.nr1.adj, 2))
+
+# Neue Variable Wochenzahl mit NA = 0
+singles.kreise.geo <- singles.kreise.geo %>% 
+  mutate(weeks.nona = weeks.nr1.adj)
+
+singles.kreise.geo$weeks.nona[is.na(singles.kreise.geo$weeks.nona)] <- 0
+
+# GID_2 als Name Landkreis + Wochenanzahl damit auf interaktive Karte angezeigt wird
+singles.kreise.geo$GID_2 <- paste(singles.kreise.geo$NAME_2, ":", singles.kreise.geo$weeks.nona)
+
+
+# singles bundeslaender --------------------------------------------------------
+
+## merge shapefiles mit album.kreis.weeks
+singles.states.geo <- left_join(de_1, single.state.weeks, by=c("name" = "state.origin"))
+
+# auf 2 nachkommastelle runden
+singles.states.geo <- singles.states.geo %>%
+  mutate(weeks.nr1.adj = round(weeks.nr1.adj, 2))
+
+# Neue Variable Wochenzahl mit NA = 0
+singles.states.geo <- singles.states.geo %>% 
+  mutate(weeks.nona = weeks.nr1.adj)
+
+singles.states.geo$weeks.nona[is.na(singles.states.geo$weeks.nona)] <- 0
+
+# GID_2 als Name Landkreis + Wochenanzahl damit auf interaktive Karte angezeigt wird
+singles.states.geo$featurecla <- paste(singles.states.geo$name, ":", singles.states.geo$weeks.nona)
+
+######################### Löschen Prozessdateien ###############################
+
+rm(alben, alben.prc, album.kreis.weeks, album.states.weeks,
+   single.complete, single.kreis.weeks, single.state.weeks, singles, singles.prc,
+   rapper, rapper.list.complete, rapper.singles.alben, list.words)
+```
