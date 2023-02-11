@@ -7,5 +7,8 @@ data-import
 data-wrangling
 data-export-excel
 albums
-weeks-on-nr.1-by-state
-weeks-on-number-one-by-districts
+state
+districts
+singles
+state-1
+districts-1

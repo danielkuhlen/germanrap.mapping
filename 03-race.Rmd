@@ -4,8 +4,7 @@
 library(tmap)
 ```
 
-
-## Weeks on Nr.1 by state
+## State
 
 ```{r}
 tmap_mode("view")
@@ -21,7 +20,7 @@ tm_shape(album.states.geo)+
   tm_view(view.legend.position = c("right", "bottom"))
 ```
 
-## Weeks on number one by districts
+## Districts
 
 ```{r}
 tm_shape(album.kreise.geo)+
@@ -34,3 +33,34 @@ tm_shape(album.kreise.geo)+
               textNA = "Kein Nr 1 Album")+
   tm_view(view.legend.position = c("right", "bottom"))
 ```
+
+# Singles
+
+## State
+
+```{r}
+tm_shape(singles.states.geo)+
+  tm_polygons(col = "weeks.nr1.adj",
+              style = "jenks",
+              labels = c("4.00 - 5.00", "5.01 - 9.00", "9.01 - 12.50", "12.51 - 20.17", "20.18 - 60.13"),
+              title = "Wochen an der Chartspitze",
+              lwd = 0.2,
+              palette = "-viridis",
+              textNA = "Kein Nr 1 Album")+
+  tm_view(view.legend.position = c("right", "bottom"))
+```
+
+## Districts
+
+```{r}
+tm_shape(singles.kreise.geo)+
+  tm_polygons(col = "weeks.nr1.adj",
+              style = "jenks",
+              label = c("0.33 - 2.50", "2.51 - 5.00", "5.01 - 12.50", "12.51 - 20.17", "20.18 - 60.13"),
+              title = "Wochen an der Chartspitze",
+              lwd = 0.2,
+              palette = "-viridis",
+              textNA = "Kein Nr 1 Album")+
+  tm_view(view.legend.position = c("right", "bottom"))
+```
+
