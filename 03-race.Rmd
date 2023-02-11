@@ -1,1 +1,36 @@
-# A caucus-race and a long tale
+# Albums
+
+```{r}
+library(tmap)
+```
+
+
+## Weeks on Nr.1 by state
+
+```{r}
+tmap_mode("view")
+
+tm_shape(album.states.geo)+
+  tm_polygons(col = "weeks.nr1.adj",
+              style = "jenks",
+              labels = c("1.00 - 1.50", "1.51 - 10.00", "10.01 - 25.50", "25.51 - 45.85", "45.86 - 56.00"),
+              title = "Wochen an der Chartspitze",
+              lwd = 0.2,
+              palette = "-viridis",
+              textNA = "Kein Nr 1 Album")+
+  tm_view(view.legend.position = c("right", "bottom"))
+```
+
+## Weeks on number one by districts
+
+```{r}
+tm_shape(album.kreise.geo)+
+  tm_polygons(col = "weeks.nr1.adj",
+              style = "jenks",
+              labels = c("0.20 - 2.00", "2.01 - 5.20", "5.21 - 12.53", "12.54 - 21.00", "21.01 - 56.00"),
+              title = "Wochen an der Chartspitze",
+              lwd = 0.2,
+              palette = "-viridis",
+              textNA = "Kein Nr 1 Album")+
+  tm_view(view.legend.position = c("right", "bottom"))
+```
