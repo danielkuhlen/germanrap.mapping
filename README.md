@@ -1,6 +1,6 @@
 # Introduction
 
-This data project provides interactive maps and data on the success of different states and districts in Germany's rap industry. The project aims to answer the question of which city produces the most successful German rappers, and therefore, which city is the most important in this industry. The data provided can also be used to analyze general questions regarding the origins of German rappers.
+This data project provides interactive maps and data on the success of different states and districts in Germany's rap industry. The project aims to answer the question of which area produces the most successful German rappers, and therefore, which area is the most important in this industry. The data provided can also be used to analyze general questions regarding the origins of German rappers.
 
 # Publication
 
