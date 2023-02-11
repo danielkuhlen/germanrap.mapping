@@ -1,63 +1,71 @@
-This is a template for creating an [HTML GitBook style](https://bookdown.org/yihui/bookdown/html.html#gitbook-style) **[bookdown](https://github.com/rstudio/bookdown)** book, [hosted on GitHub Pages](https://bookdown.org/yihui/bookdown/github.html). It is based on the one created with *File, New Project..., New Directory, Book Project using bookdown* in RStudio. It assumes you know how to use git/GitHub and R Markdown, and have some familiarity with the **bookdown** package. If you don't, the package author Yihue Xie's RStudio webinar *[Introduction to Bookdown (R Package)](https://www.youtube.com/watch?v=dVqVscgwSpw)* provides an excellent introduction. In addition, check out [*bookdown: Authoring Books and Technical Documents with R Markdown*](https://bookdown.org/yihui/bookdown), also by Yihui Xie, both for the content and the format--it is itself a **bookdown** book.
+# Introduction
 
+This data project provides interactive maps and data on the success of different states and districts in Germany's rap industry. The project aims to answer the question of which city produces the most successful German rappers, and therefore, which city is the most important in this industry. The data provided can also be used to analyze general questions regarding the origins of German rappers.
 
-## ABSOLUTE ESSENTIALS
+# Publication
 
-*Follow these instructions and you will have a published bookdown book in less than five minutes. If you have any difficulties or have feedback of any kind, please file an issue.*
+This project, coding documentation and the interactive maps are published in a bookdown format, available at the following URL:
 
-### Copy this template
+https://danielkuhlen.github.io/germanrap.mapping/
 
-- [ ] 1. Click the green "Use this template" button above.  DO NOT FORK THE REPO.  Choose a descriptive name for your repo based on your content. (Unlike when you fork a repo, you get to choose the name. If you change your mind before you do any work, delete your new repo and start over.)
+The bookdown format allows for a more comprehensive and interactive presentation of the data and results, making it easier to understand and explore the findings. 
 
-### Set up GitHub Pages
+# Data
 
-- [ ] 1. On the home page of your repo, click Settings. Scroll down to the GitHub pages section and change **Source** to **master branch /docs folder**.  Above the **Source** line, a bar will appear with your book's URL. The bar will initially be blue and indicate that your book is *ready* to be published and will change to green once it is published. Copy the URL. (Note that sometimes there is a delay until your book actually appears at that URL. If it doesn't appear after a few minutes, make a change and commit it to trigger a GitHub Pages build.)
+The *germanrap.origin* dataset contains information on various music projects, including the artist/group name, type of project, number of weeks at number one, and city, district, and state of origin. This dataset can be accessed using the following URL:
 
-- [ ] 2. Click the gear button near "About" on the home page of the repo and paste your book URL into the **Website** field that appears on the right.
+https://raw.githubusercontent.com/danielkuhlen/germanrap.mapping/master/germanrapper.origin.csv 
 
-### Clone the repo
+In detail these variables are included in the dataset:
 
-- [ ] 1. Clone your new repo with *File, New Project..., Version Control, Git* in RStudio.
+| Variable Name        | Description |
+|----------------------|-------------|
+| id                   | A unique identifier for the project |
+| artist.name          | The name of the artist or group associated with the project |
+| project.name         | The name of the project |
+| weeks.nr1            | The number of weeks the project was at number one on a chart |
+| number.collaborators | The number of collaborators involved in the project |
+| weeks.nr1.adj        | The adjusted number of weeks the project was at number one |
+| award                | The award received by the project |
+| type                 | The type of project, such as an album or single |
+| city.origin          | The city of origin for the artist or group |
+| kreis.origin         | The district of origin for the artist or group |
+| state.origin         | The state of origin for the artist or group |
+| running.number       | A sequential number assigned to each project in the dataset |
 
-### Edit some key files
+## Downloading the Data in R
 
-- [ ] 1. In `index.Rmd`, change YOUR TITLE HERE to your title. 
+To download the dataset in R, you can use the `read.csv` function from the base R library.
 
-- [ ] 2. In `index.Rmd`, change YOUR NAME HERE to your name.
+Here is an example of how to use the `read.csv` function to download the data:
 
-- [ ] 3. In `_bookdown.yml`, change YOUR GITHUB USERNAME to your GitHub username in the two places it appears.
+```
+germanrap.origins <- read.csv("https://raw.githubusercontent.com/danielkuhlen/germanrap.mapping/master/germanrapper.origin.csv")
+```
 
-- [ ] 4. In `_bookdown.yml`, change YOUR GITHUB REPO to your GitHub repo name in the two places it appears.
+## Downloading the Data in Python
 
-(Note that 3. and 4. provide links to the `.Rmd` files of your project for editing and viewing. If you move your `.Rmd` files you will need to update these file paths. Once your book is rendered, test that the edit (pen) and view (eye) buttons work.)
+In Python, you can use the `pandas` library to download and read the csv file. To do this, you can use the `read_csv` function from the `pandas` library.
 
-- [ ] 5. In `_output.yml`, change YOUR SHORT TITLE to a shortened version of your title. (Leave the "after:" line indicating that the book was published with bookdown as is.)
+Here is an example of how to use the `read_csv` function to download the data in Python:
 
-### Render the book
+```
+import pandas as pd
 
-- [ ] 1. Install **bookdown** with `install.packages("bookdown")`. If you already have it, update to the [latest version](https://CRAN.R-project.org/package=bookdown).
+germanrap.origins = pd.read_csv("https://raw.githubusercontent.com/danielkuhlen/germanrap.mapping/master/germanrapper.origin.csv")
+```
 
-- [ ] 2. Render locally with `bookdown::render_book("index.Rmd")`.
+## Downloading the Data in Stata
 
-- [ ] 3. Use `browseURL("docs/index.html")` to view your book locally (or just open `index.html` in a browser).
+In Stata, you can use the `import delimited` command to download and read the csv file. 
+Here is an example of how to use the `import delimited` command to download the data in Stata:
 
-- [ ] 4. If it looks good, commit and push all changed files to GitHub. 
+```stata
+import delimited "https://raw.githubusercontent.com/danielkuhlen/germanrap.mapping/master/germanrapper.origin.csv", clear
+```
 
-(You will need to repeat steps 2 and 4 every time you wish to update the book online.)
+# Citation
 
-### Edit README
+If you use this repository or its contents in your work, please cite it as follows:
 
-Once you've completed these steps, delete the content of this **README** and add a short description of your project with a link to the book URL. It would be appreciated if you add the following to the end:
-
-*This repo was initially generated from a bookdown template available here: https://github.com/jtr13/bookdown-template.*
-
-(And starring the repo would be nice too so I can see if this is getting used or not!)
-
-### Demo Video
-
-A demo video showing how to create a **bookdown book** following these instructions: http://bit.ly/fiveminutebookdown
-
-### Additional features
-
-Please consult the official guide to **bookdown**: https://bookdown.org/yihui/bookdown
-
+Kuhlen, Daniel. (2023). germanrap.mapping: Mapping rap success for states and districts in germany. GitHub repository: https://github.com/danielkuhlen/germanrap.mapping
